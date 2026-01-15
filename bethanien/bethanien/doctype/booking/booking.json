@@ -1,0 +1,145 @@
+{
+ "actions": [],
+ "allow_events_in_timeline": 1,
+ "autoname": "autoincrement",
+ "creation": "2026-01-10 20:12:42.500929",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "group_name",
+  "guest_count_estimated",
+  "column_break_gzsx",
+  "customer",
+  "section_break_cxtc",
+  "starts_on",
+  "ends_on",
+  "column_break_pkno",
+  "starts_on_daypart",
+  "ends_on_daypart",
+  "section_break_xylb",
+  "booking_units_table",
+  "tab_infos",
+  "comment"
+ ],
+ "fields": [
+  {
+   "allow_in_quick_entry": 1,
+   "fieldname": "group_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "label": "Gruppe",
+   "reqd": 1
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "fieldname": "guest_count_estimated",
+   "fieldtype": "Int",
+   "label": "Anzahl G\u00e4ste (gesch\u00e4tzt)",
+   "non_negative": 1
+  },
+  {
+   "fieldname": "section_break_cxtc",
+   "fieldtype": "Section Break"
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "fieldname": "starts_on",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "label": "Von",
+   "reqd": 1
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "fieldname": "ends_on",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "label": "Bis",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_pkno",
+   "fieldtype": "Column Break"
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "default": "Nachmittag",
+   "fieldname": "starts_on_daypart",
+   "fieldtype": "Select",
+   "options": "Vormittag\nNachmittag"
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "default": "Vormittag",
+   "fieldname": "ends_on_daypart",
+   "fieldtype": "Select",
+   "options": "Vormittag\nNachmittag"
+  },
+  {
+   "fieldname": "section_break_xylb",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "booking_units_table",
+   "fieldtype": "Table",
+   "options": "Booking Unit Link"
+  },
+  {
+   "fieldname": "comment",
+   "fieldtype": "Small Text",
+   "label": "Bemerkungen"
+  },
+  {
+   "fieldname": "column_break_gzsx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Ansprechpartner",
+   "options": "Booking User"
+  },
+  {
+   "fieldname": "tab_infos",
+   "fieldtype": "Tab Break",
+   "label": "Weitere Informationen"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_calendar_and_gantt": 1,
+ "links": [],
+ "modified": "2026-01-15 20:51:03.820367",
+ "modified_by": "Administrator",
+ "module": "Bethanien",
+ "name": "Booking",
+ "naming_rule": "Autoincrement",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "search_fields": "group_name",
+ "show_title_field_in_link": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "group_name",
+ "track_changes": 1
+}
