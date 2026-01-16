@@ -85,6 +85,7 @@
   {
    "fieldname": "booking_units_table",
    "fieldtype": "Table",
+   "label": "R\u00e4umlichkeiten",
    "options": "Booking Unit Link"
   },
   {
@@ -112,7 +113,7 @@
  "index_web_pages_for_search": 1,
  "is_calendar_and_gantt": 1,
  "links": [],
- "modified": "2026-01-15 20:51:03.820367",
+ "modified": "2026-01-16 21:35:02.989041",
  "modified_by": "Administrator",
  "module": "Bethanien",
  "name": "Booking",
@@ -140,6 +141,5 @@
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
- "title_field": "group_name",
- "track_changes": 1
+ "title_field": "group_name"
 }

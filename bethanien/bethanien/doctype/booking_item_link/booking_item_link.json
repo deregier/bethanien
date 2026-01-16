@@ -1,0 +1,74 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-01-16 19:31:57.796532",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "booking_item",
+  "description",
+  "base_cost",
+  "quantity",
+  "total_cost"
+ ],
+ "fields": [
+  {
+   "fieldname": "booking_item",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Buchungsartikel",
+   "options": "Booking Item",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "booking_item.description",
+   "fieldname": "description",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Beschreibung",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "booking_item.base_cost",
+   "fieldname": "base_cost",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Basiskosten (EUR)",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "quantity",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Anzahl",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "total_cost",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Gesamtkosten",
+   "precision": "2",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-01-16 21:49:23.501329",
+ "modified_by": "Administrator",
+ "module": "Bethanien",
+ "name": "Booking Item Link",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -1,0 +1,108 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-01-16 18:54:22.316698",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "checkout_f\u00fcr_buchung_section",
+  "buchung",
+  "column_break_shrw",
+  "starts_on",
+  "data_pail",
+  "ends_on",
+  "data_aldp",
+  "informationen_zur_buchung_section",
+  "booking_items",
+  "damages"
+ ],
+ "fields": [
+  {
+   "fieldname": "buchung",
+   "fieldtype": "Link",
+   "label": "Buchung",
+   "options": "Booking",
+   "read_only": 1
+  },
+  {
+   "fieldname": "informationen_zur_buchung_section",
+   "fieldtype": "Section Break",
+   "label": "Checkout Angaben"
+  },
+  {
+   "fieldname": "booking_items",
+   "fieldtype": "Table",
+   "label": "Buchungsartikel",
+   "options": "Booking Item Link"
+  },
+  {
+   "fieldname": "damages",
+   "fieldtype": "Table",
+   "label": "Besch\u00e4digungen",
+   "options": "Booking Damage"
+  },
+  {
+   "fieldname": "checkout_f\u00fcr_buchung_section",
+   "fieldtype": "Section Break",
+   "label": "Angaben zur Buchung"
+  },
+  {
+   "fieldname": "column_break_shrw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "buchung.starts_on",
+   "fieldname": "starts_on",
+   "fieldtype": "Date",
+   "label": "Von",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "buchung.starts_on_daypart",
+   "fieldname": "data_pail",
+   "fieldtype": "Data",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "buchung.ends_on",
+   "fieldname": "ends_on",
+   "fieldtype": "Date",
+   "label": "Bis",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "buchung.ends_on_daypart",
+   "fieldname": "data_aldp",
+   "fieldtype": "Data",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-01-16 21:50:54.509827",
+ "modified_by": "Administrator",
+ "module": "Bethanien",
+ "name": "Booking Checkout",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
