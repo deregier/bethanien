@@ -8,7 +8,7 @@ frappe.ui.form.on('Booking', {
 			// Check if checkout already exists
 			frappe.db.get_list('Booking Checkout', {
 				filters: {
-					'buchung': frm.doc.name
+					'booking': frm.doc.name
 				},
 				limit: 1
 			}).then(records => {

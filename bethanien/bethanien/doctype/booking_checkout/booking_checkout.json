@@ -1,12 +1,14 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "format:Checkout-{booking_groupname}-{#####}",
  "creation": "2026-01-16 18:54:22.316698",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "checkout_f\u00fcr_buchung_section",
-  "buchung",
+  "booking",
+  "booking_groupname",
   "column_break_shrw",
   "starts_on",
   "data_pail",
@@ -14,16 +16,10 @@
   "data_aldp",
   "informationen_zur_buchung_section",
   "booking_items",
-  "damages"
+  "damages",
+  "nights"
  ],
  "fields": [
-  {
-   "fieldname": "buchung",
-   "fieldtype": "Link",
-   "label": "Buchung",
-   "options": "Booking",
-   "read_only": 1
-  },
   {
    "fieldname": "informationen_zur_buchung_section",
    "fieldtype": "Section Break",
@@ -51,39 +47,64 @@
    "fieldtype": "Column Break"
   },
   {
-   "fetch_from": "buchung.starts_on",
+   "fetch_from": "booking.starts_on",
    "fieldname": "starts_on",
    "fieldtype": "Date",
+   "in_list_view": 1,
    "label": "Von",
    "read_only": 1
   },
   {
-   "fetch_from": "buchung.starts_on_daypart",
+   "fetch_from": "booking.starts_on_daypart",
    "fieldname": "data_pail",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "read_only": 1
   },
   {
-   "fetch_from": "buchung.ends_on",
+   "fetch_from": "booking.ends_on",
    "fieldname": "ends_on",
    "fieldtype": "Date",
+   "in_list_view": 1,
    "label": "Bis",
    "read_only": 1
   },
   {
-   "fetch_from": "buchung.ends_on_daypart",
+   "fetch_from": "booking.ends_on_daypart",
    "fieldname": "data_aldp",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "nights",
+   "fieldtype": "Table",
+   "label": "\u00dcbernachtungen",
+   "options": "Booking Nights"
+  },
+  {
+   "fieldname": "booking",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Buchung",
+   "options": "Booking"
+  },
+  {
+   "fetch_from": "booking.group_name",
+   "fieldname": "booking_groupname",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Buchung-Gruppenname"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-01-16 21:50:54.509827",
+ "modified": "2026-01-20 18:33:46.538531",
  "modified_by": "Administrator",
  "module": "Bethanien",
  "name": "Booking Checkout",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {

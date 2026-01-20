@@ -21,7 +21,7 @@ def create_checkout(booking_name):
 	# Check if checkout already exists
 	existing_checkout = frappe.db.get_value(
 		"Booking Checkout",
-		{"buchung": booking_name},
+		{"booking": booking_name},
 		"name"
 	)
 	
@@ -34,7 +34,7 @@ def create_checkout(booking_name):
 	# Create new checkout
 	checkout = frappe.get_doc({
 		"doctype": "Booking Checkout",
-		"buchung": booking_name,
+		"booking": booking_name,
 		#"checkout_date": frappe.utils.now(),
 		# Pre-populate fields from booking if needed
 	})
