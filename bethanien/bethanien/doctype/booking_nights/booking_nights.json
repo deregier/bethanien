@@ -1,0 +1,57 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-01-17 14:00:22.257846",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "angaben_zu_\u00fcbernachtungen_section",
+  "date",
+  "count_arrivals",
+  "count_nights"
+ ],
+ "fields": [
+  {
+   "fieldname": "angaben_zu_\u00fcbernachtungen_section",
+   "fieldtype": "Section Break",
+   "label": "Angaben zu \u00dcbernachtungen"
+  },
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "\u00dcbernachtet am",
+   "reqd": 1
+  },
+  {
+   "fieldname": "count_arrivals",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Anzahl Ank\u00fcnfte",
+   "reqd": 1
+  },
+  {
+   "fieldname": "count_nights",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Anzahl \u00dcbernachtungen",
+   "reqd": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-01-17 14:22:30.305440",
+ "modified_by": "Administrator",
+ "module": "Bethanien",
+ "name": "Booking Nights",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
