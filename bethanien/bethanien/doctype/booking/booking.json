@@ -6,20 +6,25 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "angaben_zu_g\u00e4sten_section",
   "group_name",
-  "guest_count_estimated",
+  "with_nights",
+  "is_intern",
   "column_break_gzsx",
   "customer",
+  "guest_count_estimated",
   "section_break_cxtc",
   "starts_on",
-  "ends_on",
-  "column_break_pkno",
   "starts_on_daypart",
+  "column_break_pkno",
+  "ends_on",
   "ends_on_daypart",
   "section_break_xylb",
   "booking_units_table",
   "tab_infos",
-  "comment"
+  "comment",
+  "amended_from",
+  "rejection_reason"
  ],
  "fields": [
   {
@@ -32,7 +37,6 @@
    "reqd": 1
   },
   {
-   "allow_in_quick_entry": 1,
    "fieldname": "guest_count_estimated",
    "fieldtype": "Int",
    "label": "Anzahl G\u00e4ste (gesch\u00e4tzt)",
@@ -40,42 +44,42 @@
   },
   {
    "fieldname": "section_break_cxtc",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "Buchungszeitraum"
   },
   {
-   "allow_in_quick_entry": 1,
    "fieldname": "starts_on",
    "fieldtype": "Date",
    "in_list_view": 1,
    "in_preview": 1,
-   "label": "Von",
+   "label": "Anreise",
    "reqd": 1
   },
   {
-   "allow_in_quick_entry": 1,
+   "depends_on": "eval:doc.with_nights == 1",
    "fieldname": "ends_on",
    "fieldtype": "Date",
    "in_list_view": 1,
    "in_preview": 1,
-   "label": "Bis",
-   "reqd": 1
+   "label": "Abreise",
+   "mandatory_depends_on": "eval:doc.with_nights == 1"
   },
   {
+   "depends_on": "doc.with_night == 1;",
    "fieldname": "column_break_pkno",
    "fieldtype": "Column Break"
   },
   {
-   "allow_in_quick_entry": 1,
    "default": "Nachmittag",
    "fieldname": "starts_on_daypart",
    "fieldtype": "Select",
    "options": "Vormittag\nNachmittag"
   },
   {
-   "allow_in_quick_entry": 1,
    "default": "Vormittag",
    "fieldname": "ends_on_daypart",
    "fieldtype": "Select",
+   "label": "Abreise",
    "options": "Vormittag\nNachmittag"
   },
   {
@@ -107,13 +111,48 @@
    "fieldname": "tab_infos",
    "fieldtype": "Tab Break",
    "label": "Weitere Informationen"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Booking",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "with_nights",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Mehrt\u00e4gig"
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "default": "0",
+   "fieldname": "is_intern",
+   "fieldtype": "Check",
+   "label": "Gemeinde-Intern"
+  },
+  {
+   "fieldname": "angaben_zu_g\u00e4sten_section",
+   "fieldtype": "Section Break",
+   "label": "Angaben zu G\u00e4sten"
+  },
+  {
+   "fieldname": "rejection_reason",
+   "fieldtype": "Data",
+   "label": "Grund bei Ablehnung/Stornierung",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_calendar_and_gantt": 1,
  "links": [],
- "modified": "2026-01-16 21:35:02.989041",
+ "modified": "2026-03-19 23:42:59.887668",
  "modified_by": "Administrator",
  "module": "Bethanien",
  "name": "Booking",
@@ -133,7 +172,6 @@
    "write": 1
   }
  ],
- "quick_entry": 1,
  "row_format": "Dynamic",
  "rows_threshold_for_grid_search": 20,
  "search_fields": "group_name",
@@ -141,5 +179,6 @@
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
- "title_field": "group_name"
+ "title_field": "group_name",
+ "track_changes": 1
 }

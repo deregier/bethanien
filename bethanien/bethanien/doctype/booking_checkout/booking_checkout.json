@@ -17,7 +17,8 @@
   "informationen_zur_buchung_section",
   "booking_items",
   "damages",
-  "nights"
+  "nights",
+  "guests"
  ],
  "fields": [
   {
@@ -28,7 +29,7 @@
   {
    "fieldname": "booking_items",
    "fieldtype": "Table",
-   "label": "Buchungsartikel",
+   "label": "Weitere Kosten",
    "options": "Booking Item Link"
   },
   {
@@ -87,7 +88,8 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Buchung",
-   "options": "Booking"
+   "options": "Booking",
+   "read_only": 1
   },
   {
    "fetch_from": "booking.group_name",
@@ -95,12 +97,18 @@
    "fieldtype": "Data",
    "hidden": 1,
    "label": "Buchung-Gruppenname"
+  },
+  {
+   "fieldname": "guests",
+   "fieldtype": "Table",
+   "label": "G\u00e4ste Aufenthalt",
+   "options": "Booking Guest"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-01-20 18:33:46.538531",
+ "modified": "2026-03-20 00:18:34.321980",
  "modified_by": "Administrator",
  "module": "Bethanien",
  "name": "Booking Checkout",

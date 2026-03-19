@@ -1,0 +1,68 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-01-28 21:44:53.987250",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "guest_count",
+  "age",
+  "anzahl_tage",
+  "with_night"
+ ],
+ "fields": [
+  {
+   "fieldname": "guest_count",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Anzahl Personen",
+   "non_negative": 1,
+   "reqd": 1,
+   "width": "2"
+  },
+  {
+   "default": "Erwachsener",
+   "fieldname": "age",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Alter",
+   "options": "Kind\nErwachsener",
+   "reqd": 1,
+   "width": "2"
+  },
+  {
+   "default": "1",
+   "fieldname": "anzahl_tage",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Anzahl Tage",
+   "non_negative": 1,
+   "reqd": 1,
+   "width": "2"
+  },
+  {
+   "default": "0",
+   "fieldname": "with_night",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Mit \u00dcbernachtung",
+   "width": "2"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-01-28 22:07:23.799969",
+ "modified_by": "Administrator",
+ "module": "Bethanien",
+ "name": "Booking Guest",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
