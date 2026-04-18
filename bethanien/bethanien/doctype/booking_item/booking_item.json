@@ -1,46 +1,56 @@
 {
  "actions": [],
- "allow_rename": 1,
  "creation": "2026-01-16 19:30:11.036242",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "code",
   "type",
   "description",
-  "base_cost"
+  "price"
  ],
  "fields": [
   {
    "fieldname": "description",
    "fieldtype": "Data",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Beschreibung",
    "reqd": 1
   },
   {
+   "allow_in_quick_entry": 1,
+   "default": "Allgemein",
+   "fieldname": "type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Typ",
+   "options": "Mehrt\u00e4gig\nTagesaufenthalt\nAllgemein",
+   "reqd": 1
+  },
+  {
+   "fieldname": "code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Artikel-Code",
+   "reqd": 1
+  },
+  {
    "default": "0",
-   "fieldname": "base_cost",
+   "fieldname": "price",
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Basiskosten (EUR)",
    "non_negative": 1,
-   "reqd": 1
-  },
-  {
-   "allow_in_quick_entry": 1,
-   "default": "Nebenkosten",
-   "fieldname": "type",
-   "fieldtype": "Select",
-   "in_list_view": 1,
-   "label": "Typ",
-   "options": "Mehrt\u00e4gig\nTagesaufenthalt\nNebenkosten",
    "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-03 19:41:04.258116",
+ "modified": "2026-04-18 13:43:54.630462",
  "modified_by": "Administrator",
  "module": "Bethanien",
  "name": "Booking Item",

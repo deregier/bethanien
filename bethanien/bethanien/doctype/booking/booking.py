@@ -3,6 +3,7 @@
 
 import frappe
 from frappe.model.document import Document
+from bethanien.bethanien.doctype.booking_checkout.booking_checkout import create_guest_log_entries, create_checkout
 from frappe import _
 
 
@@ -28,6 +29,21 @@ class Booking(Document):
 		"""Populate fields in the Booking Checkout doctype after creating a new booking"""
 		if self.with_nights == 0:
 			self.ends_on = self.starts_on
+	
+	def on_update(self):
+		"""Update guest log entries when booking dates change"""
+		# Check if dates have changed
+		if self.has_value_changed('starts_on') or self.has_value_changed('ends_on'):
+			# Check if there's a checkout for this booking
+			checkout_name = frappe.db.get_value(
+				"Booking Checkout",
+				{"booking": self.name},
+				"name"
+			)
+			
+			if checkout_name:
+				# Update guest log entries for the checkout
+				create_guest_log_entries(checkout_name)
 
 
 @frappe.whitelist()
@@ -69,40 +85,3 @@ def apply_workflow(doc, action, comment):
                 frappe.log_error(f"Error creating checkout: {str(e)}", "Booking Checkout Creation")
 
     return result
-
-@frappe.whitelist()
-def create_checkout(booking_name):
-	"""Create a Booking Checkout for the given booking"""
-	
-	# Check if booking exists
-	if not frappe.db.exists("Booking", booking_name):
-		frappe.throw(_("Buchung {0} nicht gefunden").format(booking_name))
-	
-	# Check if checkout already exists
-	existing_checkout = frappe.db.get_value(
-		"Booking Checkout",
-		{"booking": booking_name},
-		"name"
-	)
-	
-	if existing_checkout:
-		frappe.throw(_("Es existiert bereits ein Checkout für diese Buchung: {0}").format(existing_checkout))
-	
-	# Get booking document
-	booking = frappe.get_doc("Booking", booking_name)
-	
-	# Create new checkout
-	checkout = frappe.get_doc({
-		"doctype": "Booking Checkout",
-		"booking": booking_name,
-		#"checkout_date": frappe.utils.now(),
-		# Pre-populate fields from booking if needed
-	})
-	
-	checkout.insert()
-	frappe.db.commit()
-	
-	# Add comment to booking after checkout is created
-	booking.add_comment("Info", text=f"✅ Checkout {checkout.name} wurde erstellt.")
-	
-	return checkout.name

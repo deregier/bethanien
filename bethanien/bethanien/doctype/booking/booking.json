@@ -10,15 +10,19 @@
   "group_name",
   "with_nights",
   "is_intern",
+  "stay_type",
   "column_break_gzsx",
   "customer",
+  "customer_email",
   "guest_count_estimated",
   "section_break_cxtc",
   "starts_on",
   "starts_on_daypart",
+  "starts_on_dt",
   "column_break_pkno",
   "ends_on",
   "ends_on_daypart",
+  "ends_on_dt",
   "section_break_xylb",
   "booking_units_table",
   "tab_infos",
@@ -73,14 +77,14 @@
    "default": "Nachmittag",
    "fieldname": "starts_on_daypart",
    "fieldtype": "Select",
-   "options": "Vormittag\nNachmittag"
+   "options": "Vormittag\nNachmittag\nAbend"
   },
   {
    "default": "Vormittag",
    "fieldname": "ends_on_daypart",
    "fieldtype": "Select",
    "label": "Abreise",
-   "options": "Vormittag\nNachmittag"
+   "options": "Vormittag\nNachmittag\nAbend"
   },
   {
    "fieldname": "section_break_xylb",
@@ -146,13 +150,38 @@
    "fieldtype": "Data",
    "label": "Grund bei Ablehnung/Stornierung",
    "read_only": 1
+  },
+  {
+   "default": "tagesaufenthalt",
+   "fieldname": "stay_type",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Aufenthaltstyp",
+   "options": "Booking Stay Type"
+  },
+  {
+   "fieldname": "customer_email",
+   "fieldtype": "Data",
+   "label": "Rechnungs E-Mail"
+  },
+  {
+   "fieldname": "starts_on_dt",
+   "fieldtype": "Datetime",
+   "label": "Anreise (Datum und Uhrzeit)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "ends_on_dt",
+   "fieldtype": "Datetime",
+   "label": "Abreise (Datum und Uhrzeit)",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_calendar_and_gantt": 1,
  "links": [],
- "modified": "2026-03-19 23:42:59.887668",
+ "modified": "2026-04-18 15:23:32.412181",
  "modified_by": "Administrator",
  "module": "Bethanien",
  "name": "Booking",

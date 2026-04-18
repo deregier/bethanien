@@ -1,7 +1,6 @@
 {
  "actions": [],
- "allow_rename": 1,
- "autoname": "format:Checkout-{booking_groupname}-{#####}",
+ "autoname": "hash",
  "creation": "2026-01-16 18:54:22.316698",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -17,7 +16,6 @@
   "informationen_zur_buchung_section",
   "booking_items",
   "damages",
-  "nights",
   "guests"
  ],
  "fields": [
@@ -78,12 +76,6 @@
    "read_only": 1
   },
   {
-   "fieldname": "nights",
-   "fieldtype": "Table",
-   "label": "\u00dcbernachtungen",
-   "options": "Booking Nights"
-  },
-  {
    "fieldname": "booking",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -102,17 +94,17 @@
    "fieldname": "guests",
    "fieldtype": "Table",
    "label": "G\u00e4ste Aufenthalt",
-   "options": "Booking Guest"
+   "options": "Booking Guest Log"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-03-20 00:18:34.321980",
+ "modified": "2026-04-13 19:15:30.818821",
  "modified_by": "Administrator",
  "module": "Bethanien",
  "name": "Booking Checkout",
- "naming_rule": "Expression",
+ "naming_rule": "Random",
  "owner": "Administrator",
  "permissions": [
   {

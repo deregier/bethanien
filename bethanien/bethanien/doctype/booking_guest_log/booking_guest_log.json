@@ -1,0 +1,84 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-01-28 21:44:53.987250",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "date",
+  "overnight_count_adult",
+  "overnight_count_child",
+  "overnight_count_baby",
+  "day_count_adult",
+  "day_count_child"
+ ],
+ "fields": [
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "label": "Datum",
+   "reqd": 1
+  },
+  {
+   "fieldname": "overnight_count_adult",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "\u00dcbernachtungen (ab 16 Jahre)",
+   "non_negative": 1,
+   "reqd": 1,
+   "width": "2"
+  },
+  {
+   "fieldname": "overnight_count_child",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "\u00dcbernachtungen (ab 5 Jahre)",
+   "non_negative": 1,
+   "reqd": 1,
+   "width": "2"
+  },
+  {
+   "fieldname": "overnight_count_baby",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "\u00dcbernachtungen (unter 5 Jahre)",
+   "non_negative": 1,
+   "reqd": 1,
+   "width": "2"
+  },
+  {
+   "fieldname": "day_count_adult",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Tagesg\u00e4ste (ab 16 Jahre)",
+   "non_negative": 1,
+   "reqd": 1,
+   "width": "2"
+  },
+  {
+   "fieldname": "day_count_child",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Tagesg\u00e4ste (ab 5 Jahre)",
+   "non_negative": 1,
+   "reqd": 1,
+   "width": "2"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-03-27 13:23:21.907337",
+ "modified_by": "Administrator",
+ "module": "Bethanien",
+ "name": "Booking Guest Log",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

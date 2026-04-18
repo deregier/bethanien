@@ -1,0 +1,18 @@
+#checkout-app .btn-group .btn {
+	padding: 10px 15px;
+	font-size: 1.2rem;
+}
+
+#checkout-app .card {
+	border-radius: 12px;
+	border: none;
+}
+
+.admin-section {
+	border-left: 4px solid #ffc107;
+}
+
+/* Verhindert Text-Selektion beim schnellen Tippen auf Plus/Minus */
+#checkout-app span {
+	user-select: none;
+}

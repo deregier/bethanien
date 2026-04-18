@@ -13,7 +13,7 @@ frappe.ui.form.on('Booking', {
 		}
 	},
 	
-	 onload: function(frm) {
+	onload: function(frm) {
 	 	// Populate booking_units_table when creating a new booking (fallback)
 	 	if (frm.is_new() && (!frm.doc.booking_units_table || frm.doc.booking_units_table.length === 0)) {
 	 		populate_booking_units(frm);
@@ -39,8 +39,43 @@ frappe.ui.form.on('Booking', {
 				resolve();
 			}
 		});
-     }
+     },
+
+	 // after changing value do action
+	 customer(frm) {
+		console.log('Customer changed:', frm.doc.customer, frm.customer.email);
+		frm.set_value('customer_email', frm.customer.email);
+	 },
+
+	starts_on(frm) { update_datetime_fields(frm); },
+	starts_on_daypart(frm) { update_datetime_fields(frm); },
+	ends_on(frm) { update_datetime_fields(frm); },
+	ends_on_daypart(frm) { update_datetime_fields(frm); }
 });
+
+function update_datetime_fields(frm) {
+	const daypart_time_field = {
+		'Vormittag': 'morning_time',
+		'Nachmittag': 'afternoon_time',
+		'Abend': 'evening_time'
+	};
+
+	frappe.db.get_doc('Booking Settings').then(settings => {
+		if (frm.doc.starts_on && frm.doc.starts_on_daypart) {
+			const time = settings[daypart_time_field[frm.doc.starts_on_daypart]] || '00:00:00';
+			frm.set_value('starts_on_dt', frm.doc.starts_on + ' ' + time);
+		}
+
+		const ends_on_date = frm.doc.ends_on || frm.doc.starts_on;
+		if (!frm.doc.ends_on && frm.doc.starts_on) {
+			frm.set_value('ends_on', frm.doc.starts_on);
+		}
+		if (ends_on_date && frm.doc.ends_on_daypart) {
+			const time = settings[daypart_time_field[frm.doc.ends_on_daypart]] || '00:00:00';
+			frm.set_value('ends_on_dt', ends_on_date + ' ' + time);
+		}
+	});
+}
 
 function setup_workflow_buttons(frm) {
 
@@ -148,7 +183,7 @@ function populate_booking_units(frm) {
 
 function create_checkout(frm) {
 	frappe.call({
-		method: 'bethanien.bethanien.doctype.booking.booking.create_checkout',
+		method: 'bethanien.bethanien.doctype.booking_checkout.booking_checkout.create_checkout',
 		args: {
 			booking_name: frm.doc.name
 		},

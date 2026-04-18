@@ -7,7 +7,7 @@
  "engine": "InnoDB",
  "field_order": [
   "description",
-  "cost"
+  "price"
  ],
  "fields": [
   {
@@ -19,7 +19,7 @@
   },
   {
    "default": "0",
-   "fieldname": "cost",
+   "fieldname": "price",
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Kosten",
@@ -31,7 +31,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-01-16 21:47:36.966940",
+ "modified": "2026-04-18 13:49:03.990699",
  "modified_by": "Administrator",
  "module": "Bethanien",
  "name": "Booking Damage",

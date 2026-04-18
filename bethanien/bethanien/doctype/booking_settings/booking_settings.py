@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class BookingGuest(Document):
+class BookingSettings(Document):
 	pass

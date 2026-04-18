@@ -1,0 +1,209 @@
+{% if doc %}
+
+{% extends "templates/web.html" %}
+
+{% block title %}Checkout: {{ doc.name }}{% endblock %}
+
+{% block head_include %}
+<style>
+	#checkout-app .card {
+		border-radius: 12px;
+		border: none;
+	}
+	.counter-input {
+		max-width: 70px;
+		appearance: textfield;
+		-moz-appearance: textfield;
+	}
+	.counter-input::-webkit-inner-spin-button,
+	.counter-input::-webkit-outer-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+	.table-history th { white-space: nowrap; }
+	.table-history td { vertical-align: middle; }
+	.entry-card-today { border-left: 4px solid var(--primary); }
+</style>
+{% endblock %}
+
+{% block page_content %}
+<div class="container my-4" id="checkout-app">
+	<div class="d-flex justify-content-between align-items-center mb-4">
+		<h2>Checkout: {{ doc.name }}</h2>
+		<span class="badge {% if doc.status == 'Open' %}bg-success{% elif doc.status == 'Checked Out' %}bg-secondary{% else %}bg-warning{% endif %}">
+			{{ doc.status or 'Draft' }}
+		</span>
+	</div>
+
+	{% if is_manager %}
+	<div class="card border-warning mb-4 shadow-sm">
+		<div class="card-header bg-warning text-dark fw-bold">Manager-Ansicht: Gast-Details</div>
+		<div class="card-body">
+			<div class="row">
+				<div class="col-md-6">
+					<label class="small text-muted">Adresse</label>
+					{% if customer_address %}
+					<p>{{ customer_address.address_line1 or 'Keine Adresse hinterlegt' }}<br>
+					   {{ customer_address.city or '' }}</p>
+					{% else %}
+					<p>Keine Adresse hinterlegt</p>
+					{% endif %}
+				</div>
+				<div class="col-md-6">
+					<label class="small text-muted">Kontakt-Email</label>
+					<div class="input-group">
+						<input type="email" id="guest-email" class="form-control" value="{{ doc.contact_email or '' }}">
+						<button class="btn btn-outline-primary" onclick="updateEmail()">Speichern</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	{% endif %}
+
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-info fw-bold">Informationen</div>
+        <div class="card-body">
+            <p>Die Zahlen werden für die Abrechnung verwendet. Gesetzlich müssen dem Verantwortlich die Übernachtungszahlen bekannt sein.</p>
+            <p>Pflege die tägliche Anwesenheit der Gäste am besten <strong>Jeden Abend</strong> ein.</p>
+        </div>
+    </div>
+
+	<div id="entries-container">
+		<div class="text-center text-muted py-3">Lade Einträge...</div>
+	</div>
+</div>
+{% endblock %}
+
+{% endif %}
+
+{% block script %}
+<script>
+	let daily_entries = [];
+	const today = new Date().toISOString().split('T')[0];
+	const FIELDS = ['adults_ue', 'children_ue', 'u5_ue', 'adults_day', 'children_day'];
+	const LABELS = {
+		adults_ue:    'Übernachtung (Erw.)',
+		children_ue:  'Übernachtung (Kinder)',
+		u5_ue:        'Übernachtung (Kleinkinder &lt;5J)',
+		adults_day:   'Tagesgäste (Erw.)',
+		children_day: 'Tagesgäste (Kinder)'
+	};
+
+	frappe.ready(function() {
+		const booking_name = new URLSearchParams(window.location.search).get('name');
+		if (!booking_name) return;
+		frappe.call({
+			method: 'bethanien.www.checkout.get_guests_data',
+			args: { booking: booking_name },
+			callback: function(r) {
+				daily_entries = r.message || [];
+				// Sicherstellen, dass heute immer vorhanden ist
+				if (!daily_entries.find(e => e.date === today)) {
+					daily_entries.unshift({ date: today, adults_ue: 0, children_ue: 0, u5_ue: 0, adults_day: 0, children_day: 0 });
+				}
+				renderAllEntries();
+			}
+		});
+	});
+
+	function renderCounterInput(field, date, value) {
+		const id = `val-${field}-${date}`;
+		return `<div class="col-6 col-md-4 col-lg mb-3">
+			<label class="d-block small fw-bold">${LABELS[field]}</label>
+			<div class="input-group justify-content-center shadow-sm">
+				<button class="btn btn-outline-secondary" type="button" onclick="changeVal('${field}','${date}',-1)">-</button>
+				<input type="number" id="${id}" class="form-control text-center fw-bold counter-input" value="${value}" min="0">
+				<button class="btn btn-outline-secondary" type="button" onclick="changeVal('${field}','${date}',1)">+</button>
+			</div>
+		</div>`;
+	}
+
+	function renderEntryCard(entry) {
+		const d = entry.date;
+		const isToday = d === today;
+		const dateLabel = new Date(d + 'T00:00:00').toLocaleDateString('de-DE', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' });
+		return `<div class="card mb-4 shadow-sm${isToday ? ' entry-card-today' : ''}" id="card-${d}">
+			<div class="card-body">
+				<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+					<h5 class="mb-0">Anwesenheit für ${dateLabel}${isToday ? ' <span class="badge bg-primary ms-2 fs-6">heute</span>' : ''}</h5>
+					<button class="btn btn-outline-secondary btn-sm" type="button" onclick="copyPreviousDay('${d}')">
+						↩ Werte vom vorherigen Tag übernehmen
+					</button>
+				</div>
+				<div class="row text-center mt-2">
+					${FIELDS.map(f => renderCounterInput(f, d, entry[f] || 0)).join('')}
+				</div>
+				<button class="btn btn-primary w-100 mt-3 py-2" type="button" onclick="saveDailyLog('${d}')">Daten speichern</button>
+			</div>
+		</div>`;
+	}
+
+	function renderAllEntries() {
+		const sorted = [...daily_entries].sort((a, b) => b.date.localeCompare(a.date));
+		document.getElementById('entries-container').innerHTML = sorted.map(renderEntryCard).join('');
+	}
+
+	function changeVal(field, date, delta) {
+		const el = document.getElementById(`val-${field}-${date}`);
+		el.value = Math.max(0, (parseInt(el.value) || 0) + delta);
+	}
+
+	function getVal(field, date) {
+		return Math.max(0, parseInt(document.getElementById(`val-${field}-${date}`).value) || 0);
+	}
+
+	function copyPreviousDay(date) {
+		const sorted = [...daily_entries].sort((a, b) => b.date.localeCompare(a.date));
+		const prev = sorted.find(e => e.date < date);
+		if (!prev) {
+			frappe.show_alert({ message: 'Kein früherer Eintrag vorhanden', indicator: 'orange' });
+			return;
+		}
+		FIELDS.forEach(f => {
+			const el = document.getElementById(`val-${f}-${date}`);
+			if (el) el.value = prev[f] || 0;
+		});
+		frappe.show_alert({ message: 'Werte vom ' + prev.date + ' übernommen', indicator: 'blue' });
+	}
+
+	function saveDailyLog(date) {
+		const booking_name = new URLSearchParams(window.location.search).get('name');
+		if (!booking_name) { frappe.msgprint('Fehler: Keine Buchungs-ID gefunden'); return; }
+
+		const data = { booking: booking_name, date };
+		FIELDS.forEach(f => { data[f] = getVal(f, date); });
+
+		frappe.call({
+			method: 'bethanien.www.checkout.add_daily_entry',
+			args: data,
+			callback: function(r) {
+				if (r.message && r.message.success) {
+					const idx = daily_entries.findIndex(e => e.date === date);
+					const updated = { date, ...Object.fromEntries(FIELDS.map(f => [f, data[f]])) };
+					if (idx >= 0) daily_entries[idx] = updated;
+					else daily_entries.push(updated);
+					frappe.show_alert({ message: 'Gespeichert', indicator: 'green' });
+				} else {
+					frappe.msgprint('Fehler beim Speichern');
+				}
+			},
+			error: function(err) {
+				console.error('Fehler:', err);
+				frappe.msgprint('Fehler beim Speichern');
+			}
+		});
+	}
+
+	function updateEmail() {
+		const new_email = document.getElementById('guest-email').value;
+		const booking_name = new URLSearchParams(window.location.search).get('name');
+		if (!booking_name) { frappe.msgprint('Fehler: Keine Buchungs-ID gefunden'); return; }
+		frappe.call({
+			method: 'frappe.client.set_value',
+			args: { doctype: 'Booking Checkout', name: booking_name, fieldname: 'contact_email', value: new_email },
+			callback: function() { frappe.show_alert({ message: 'Email aktualisiert', indicator: 'green' }); }
+		});
+	}
+</script>
+{% endblock %}
