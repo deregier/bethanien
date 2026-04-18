@@ -1,0 +1,484 @@
+/* ── Booking Cal – EventCalendar page ──────────────────────────────────── */
+
+/* ── App container ──────────────────────────────────────────────────────── */
+#booking-cal-app {
+  display: flex;
+  flex-direction: column;
+  height: calc(100dvh - 150px);
+  height: calc(100vh  - 150px); /* fallback */
+  min-height: 520px;
+}
+
+/* ── Utility ─────────────────────────────────────────────────────────────── */
+.bca-hidden { display: none !important; }
+
+/* ── Tabs ────────────────────────────────────────────────────────────────── */
+.bca-tabs {
+  display: flex;
+  border-bottom: 2px solid var(--border-color, #e2e8f0);
+  flex-shrink: 0;
+  margin-bottom: 2px;
+}
+
+.bca-tab {
+  padding: 9px 22px;
+  min-height: 42px;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  font-size: 0.93rem;
+  font-weight: 600;
+  color: var(--text-muted, #6c757d);
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+
+.bca-tab:hover { color: var(--text-color, #1a1a1a); }
+
+.bca-tab--active {
+  color: var(--primary, #171717);
+  border-bottom-color: var(--primary, #171717);
+}
+
+/* ── Shared toolbar ──────────────────────────────────────────────────────── */
+.bca-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 0 4px 0;
+  flex-shrink: 0;
+}
+
+.bca-btn {
+  min-width: 40px;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--border-color, #d1d8dd);
+  border-radius: 6px;
+  background: var(--card-bg, #fff);
+  color: var(--text-color, #1a1a1a);
+  font-size: 1.25rem;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.12s;
+}
+.bca-btn:hover,
+.bca-btn:focus { background: var(--control-bg-on-gray, #f0f4f7); outline: none; }
+
+.bca-btn-today {
+  font-size: 0.85rem;
+  font-weight: 700;
+  min-width: 68px;
+}
+
+.bca-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--heading-color, #1a1a1a);
+  margin-left: 6px;
+  white-space: nowrap;
+  flex: 1;
+}
+
+/* ── View buttons ─────────────────────────────────────────────────────────── */
+.bca-view-btns {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+  background: var(--control-bg, #f4f5f6);
+  border: 1px solid var(--border-color, #d1d8dd);
+  border-radius: 7px;
+  padding: 3px;
+}
+
+.bca-view-btn {
+  padding: 4px 12px;
+  min-height: 30px;
+  border: none;
+  border-radius: 5px;
+  background: none;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-muted, #6c757d);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.12s, color 0.12s;
+}
+
+.bca-view-btn:hover {
+  color: var(--text-color, #1a1a1a);
+  background: rgba(0,0,0,0.06);
+}
+
+.bca-view-btn--active {
+  background: var(--card-bg, #fff);
+  color: var(--text-color, #1a1a1a);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+}
+
+/* ── Legend ──────────────────────────────────────────────────────────────── */
+.bca-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  padding: 2px 0 6px 0;
+  flex-shrink: 0;
+}
+
+.bca-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.78rem;
+  color: var(--text-color, #333);
+}
+
+.bca-legend-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+/* ── Calendar view ───────────────────────────────────────────────────────── */
+#view-calendar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+#ec {
+  flex: 1;
+  min-height: 0;
+  /* Pass height to EventCalendar via style — EC measures the element */
+  height: 100%;
+}
+
+/* ── EventCalendar overrides ─────────────────────────────────────────────── */
+#ec .ec {
+  height: 100%;
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 8px;
+  overflow: hidden;
+  font-family: inherit;
+}
+
+#ec .ec-toolbar { display: none; }  /* we use our own toolbar */
+
+/* Resource label: dot + name */
+.bca-res-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  margin-right: 5px;
+  flex-shrink: 0;
+}
+
+.bca-res-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Clickable day cells in dayGridMonth */
+#ec .ec-day { cursor: pointer; }
+#ec .ec-day:has(.ec-event) { cursor: default; }
+#ec .ec-day-head { cursor: default; }
+
+/* Tighter event text */
+#ec .ec-event-title {
+  font-size: 0.78rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* dayGridMonth compact event pill */
+.bca-ev-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 3px 4px;
+  width: 100%;
+  padding: 0 2px;
+}
+
+.bca-ev-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.bca-ev-text {
+  font-size: 0.75rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+/* EC listMonth: slightly compact */
+#ec .ec-list-day-side {
+  font-size: 0.78rem;
+}
+
+#ec .ec-list-event-title {
+  font-size: 0.85rem;
+}
+
+/* Desktop dayGridMonth: room tags inside event bar */
+.bca-ev-rooms {
+  display: flex;
+  gap: 3px;
+  flex-wrap: wrap;
+  margin-top: 1px;
+}
+
+.bca-ev-room {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 4px;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+/* ── List view ───────────────────────────────────────────────────────────── */
+#view-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.bca-list-toolbar {
+  padding: 4px 0 8px 0;
+  flex-shrink: 0;
+}
+
+.bca-list-count {
+  font-size: 0.83rem;
+  color: var(--text-muted, #6c757d);
+  font-weight: 500;
+}
+
+#bca-booking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 2rem;
+  overflow-y: auto;
+}
+
+.bca-card {
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 10px;
+  padding: 14px 16px 12px 16px;
+  cursor: pointer;
+  transition: box-shadow 0.15s, transform 0.1s;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.bca-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+  transform: translateY(-1px);
+}
+
+.bca-card__date-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.bca-card__date {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--heading-color, #1a1a1a);
+}
+
+.bca-card__arrow {
+  color: var(--text-muted, #888);
+  font-size: 0.9rem;
+}
+
+.bca-card__status {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 9px;
+  border-radius: 20px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.bca-card__title {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--text-muted, #555);
+  word-break: break-word;
+  margin-top: 1px;
+}
+
+.bca-card__meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 4px;
+}
+
+.bca-room-tag {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.bca-list-loading,
+.bca-list-empty {
+  color: var(--text-muted, #888);
+  font-size: 0.9rem;
+  padding: 24px 0;
+  text-align: center;
+}
+
+/* ── Preview panel ───────────────────────────────────────────────────────── */
+.bca-preview {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 280px;
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.16);
+  padding: 18px 18px 14px 18px;
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bca-preview__close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--text-muted, #888);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.bca-preview__close:hover { background: var(--control-bg-on-gray, #f0f4f7); }
+
+.bca-preview__status {
+  display: inline-block;
+  align-self: flex-start;
+  font-size: 0.73rem;
+  font-weight: 700;
+  padding: 3px 12px;
+  border-radius: 20px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.bca-preview__group {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--heading-color, #1a1a1a);
+  margin-top: 2px;
+}
+
+.bca-preview__row {
+  display: flex;
+  gap: 8px;
+  font-size: 0.86rem;
+  color: var(--text-color, #333);
+}
+
+.bca-preview__label {
+  font-weight: 600;
+  min-width: 52px;
+  color: var(--text-muted, #666);
+}
+
+.bca-preview__open-btn {
+  display: block;
+  margin-top: 10px;
+  padding: 10px 0;
+  text-align: center;
+  background: var(--primary, #171717);
+  color: #fff !important;
+  border-radius: 6px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+  min-height: 40px;
+  line-height: 20px;
+  transition: opacity 0.15s;
+}
+.bca-preview__open-btn:hover { opacity: 0.85; }
+
+/* ── Mobile ──────────────────────────────────────────────────────────────── */
+
+/* Timeline view buttons hidden on mobile */
+@media (max-width: 700px) {
+  .bca-desktop-only { display: none !important; }
+  .bca-legend       { display: none !important; }
+}
+
+/* listMonth "Tage" button hidden on desktop */
+@media (min-width: 701px) {
+  .bca-mobile-only  { display: none !important; }
+}
+
+@media (max-width: 600px) {
+  #booking-cal-app {
+    margin-left: -15px;
+    margin-right: -15px;
+    padding: 0 8px;
+    height: calc(100dvh - 100px);
+    height: calc(100vh  - 100px);
+    min-height: 400px;
+  }
+
+  .bca-tab    { padding: 8px 14px; font-size: 0.86rem; }
+  .bca-title  { font-size: 0.9rem; }
+  .bca-btn    { min-width: 36px; padding: 0 10px; }
+
+  .bca-toolbar { flex-wrap: wrap; }
+  .bca-view-btns { width: 100%; margin-left: 0; margin-top: 3px; }
+  .bca-view-btn  { flex: 1; padding: 4px 6px; font-size: 0.78rem; text-align: center; }
+
+  .bca-preview {
+    bottom: 0; right: 0; left: 0;
+    width: 100%;
+    border-radius: 14px 14px 0 0;
+    padding: 18px 16px 32px 16px;
+  }
+
+  .bca-card  { padding: 11px 12px 9px 12px; }
+  .bca-card__title { font-size: 0.93rem; }
+}
+
+@media (max-width: 900px) {
+  .bca-legend-name { max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+}

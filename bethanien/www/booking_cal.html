@@ -1,0 +1,61 @@
+{% extends "templates/web.html" %}
+
+{% block title %}Buchungskalender{% endblock %}
+
+{% block head_include %}
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@event-calendar/build@5.7.0/dist/event-calendar.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@event-calendar/build@5.7.0/dist/event-calendar.min.js"></script>
+<script>var BCA_CONFIG = {{ bca_config }};</script>
+{% endblock %}
+
+{% block page_content %}
+<div id="booking-cal-app">
+
+  <!-- Tab switcher -->
+  <div class="bca-tabs" role="tablist">
+    <button class="bca-tab bca-tab--active" id="tab-calendar" role="tab" aria-selected="true">Kalender</button>
+    <button class="bca-tab" id="tab-list" role="tab" aria-selected="false">Liste</button>
+  </div>
+
+  <!-- Shared toolbar (always visible) -->
+  <div class="bca-toolbar">
+    <button class="bca-btn" id="btn-prev" title="Zurück">&#8249;</button>
+    <button class="bca-btn bca-btn-today" id="btn-today">Heute</button>
+    <button class="bca-btn" id="btn-next" title="Vor">&#8250;</button>
+    <span class="bca-title" id="bca-title"></span>
+    <div class="bca-view-btns" id="bca-view-btns"></div>
+  </div>
+
+  <!-- Calendar view -->
+  <div id="view-calendar">
+    <div id="bca-legend" class="bca-legend"></div>
+    <div id="ec"></div>
+  </div>
+
+  <!-- List view -->
+  <div id="view-list" class="bca-hidden">
+    <div class="bca-list-toolbar">
+      <span class="bca-list-count" id="bca-list-count"></span>
+    </div>
+    <div id="bca-booking-list"></div>
+  </div>
+
+</div>
+
+<!-- Booking preview panel (single-click) -->
+<div id="booking-preview" class="bca-preview bca-hidden">
+  <button class="bca-preview__close" id="preview-close" title="Schließen">&times;</button>
+  <div class="bca-preview__status" id="preview-status"></div>
+  <div class="bca-preview__group" id="preview-group"></div>
+  <div class="bca-preview__row">
+    <span class="bca-preview__label">Anreise</span>
+    <span id="preview-start"></span>
+  </div>
+  <div class="bca-preview__row">
+    <span class="bca-preview__label">Abreise</span>
+    <span id="preview-end"></span>
+  </div>
+  <a class="bca-preview__open-btn" id="preview-open-btn" href="#">Buchung öffnen ›</a>
+</div>
+{% endblock %}

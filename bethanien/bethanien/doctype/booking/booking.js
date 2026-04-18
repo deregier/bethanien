@@ -176,6 +176,18 @@ function populate_booking_units(frm) {
 				
 				 // Refresh the field to show the new rows
 				 frm.refresh_field('booking_units_table');
+
+				 // Pre-select a booking unit passed via URL param (e.g. from booking calendar)
+				 // frappe.route_options is already cleared at this point, so read directly from URL
+				 var preselect = new URLSearchParams(window.location.search).get('booking_unit');
+				 if (preselect) {
+					frm.doc.booking_units_table.forEach(function(row) {
+						if (row.booking_unit === preselect) {
+							frappe.model.set_value(row.doctype, row.name, 'is_active', 1);
+						}
+					});
+					frm.refresh_field('booking_units_table');
+				 }
 			}
 		}
 	});
