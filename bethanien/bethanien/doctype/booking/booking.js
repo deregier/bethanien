@@ -50,7 +50,50 @@ frappe.ui.form.on('Booking', {
 	starts_on(frm) { update_datetime_fields(frm); },
 	starts_on_daypart(frm) { update_datetime_fields(frm); },
 	ends_on(frm) { update_datetime_fields(frm); },
-	ends_on_daypart(frm) { update_datetime_fields(frm); }
+	ends_on_daypart(frm) { update_datetime_fields(frm); },
+	with_nights(frm) { update_datetime_fields(frm); },
+
+	before_save: function(frm) {
+		const rows = (frm.doc.booking_units_table || [])
+			.filter(r => r.is_active && r.booking_unit)
+			.map(r => ({
+				booking_unit: r.booking_unit,
+				starts_on_dt: r.starts_on_dt || frm.doc.starts_on_dt || null,
+				ends_on_dt:   r.ends_on_dt   || frm.doc.ends_on_dt   || null,
+			}));
+
+		if (!rows.length) return;
+
+		return new Promise((resolve, reject) => {
+			frappe.call({
+				method: 'bethanien.bethanien.doctype.booking.booking.check_open_conflicts',
+				args: {
+					booking_name: frm.doc.name || '__new__',
+					unit_rows: JSON.stringify(rows),
+				},
+				callback: function(r) {
+					const conflicts = r.message || [];
+					if (!conflicts.length) {
+						resolve();
+						return;
+					}
+					const lines = conflicts.map(c =>
+						`<li><b>${frappe.utils.escape_html(c.unit_name)}</b>: ` +
+						`<a href="/app/booking/${c.booking}">${c.booking}</a> ` +
+						`(${frappe.utils.escape_html(c.group_name)}, ${frappe.utils.escape_html(c.workflow_state)})</li>`
+					).join('');
+					frappe.confirm(
+						__('Folgende Buchungseinheiten sind in anderen offenen Buchungen bereits für diesen Zeitraum vorgemerkt:') +
+						`<ul>${lines}</ul>` +
+						__('Trotzdem speichern?'),
+						resolve,
+						reject
+					);
+				},
+				error: reject,
+			});
+		});
+	}
 });
 
 function update_datetime_fields(frm) {
@@ -61,19 +104,39 @@ function update_datetime_fields(frm) {
 	};
 
 	frappe.db.get_doc('Booking Settings').then(settings => {
+		let new_starts_on_dt = null;
+		let new_ends_on_date = null;
+		let new_ends_on_dt   = null;
+
 		if (frm.doc.starts_on && frm.doc.starts_on_daypart) {
 			const time = settings[daypart_time_field[frm.doc.starts_on_daypart]] || '00:00:00';
-			frm.set_value('starts_on_dt', frm.doc.starts_on + ' ' + time);
+			new_starts_on_dt = frm.doc.starts_on + ' ' + time;
+
+			if (new_starts_on_dt !== frm.doc.starts_on_dt) {
+				frm.set_value('starts_on_dt', new_starts_on_dt);
+			}
 		}
 
-		const ends_on_date = frm.doc.ends_on || frm.doc.starts_on;
-		if (!frm.doc.ends_on && frm.doc.starts_on) {
-			frm.set_value('ends_on', frm.doc.starts_on);
+		
+		if (frm.doc.with_nights == 0) {
+			new_ends_on_date = frm.doc.starts_on;
+			if (frm.doc.ends_on !== frm.doc.starts_on) {
+				frm.set_value('ends_on', frm.doc.starts_on);
+			}
+		} else {
+			new_ends_on_date = frm.doc.ends_on || frm.doc.starts_on;
 		}
-		if (ends_on_date && frm.doc.ends_on_daypart) {
+
+		if (new_ends_on_date && frm.doc.ends_on_daypart) {
 			const time = settings[daypart_time_field[frm.doc.ends_on_daypart]] || '00:00:00';
-			frm.set_value('ends_on_dt', ends_on_date + ' ' + time);
+			new_ends_on_dt = new_ends_on_date + ' ' + time;
+
+			if (new_ends_on_dt !== frm.doc.ends_on_dt) {
+					frm.set_value('ends_on_dt', new_ends_on_dt);
+
+				}
 		}
+
 	});
 }
 

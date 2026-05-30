@@ -56,25 +56,4 @@ function saveDailyLog() {
 	});
 }
 
-function updateEmail() {
-	const new_email = document.getElementById('guest-email').value;
-	const booking_name = new URLSearchParams(window.location.search).get('name');
-	
-	if (!booking_name) {
-		frappe.msgprint('Fehler: Keine Buchungs-ID gefunden');
-		return;
-	}
-	
-	frappe.call({
-		method: "frappe.client.set_value",
-		args: {
-			doctype: "Booking Checkout",
-			name: booking_name,
-			fieldname: "contact_email",
-			value: new_email
-		},
-		callback: function() {
-			frappe.msgprint("Email aktualisiert");
-		}
-	});
-}
+

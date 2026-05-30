@@ -29,37 +29,31 @@
 {% block page_content %}
 <div class="container my-4" id="checkout-app">
 	<div class="d-flex justify-content-between align-items-center mb-4">
-		<h2>Checkout: {{ doc.name }}</h2>
+		<h2>Checkout</h2>
+
 		<span class="badge {% if doc.status == 'Open' %}bg-success{% elif doc.status == 'Checked Out' %}bg-secondary{% else %}bg-warning{% endif %}">
 			{{ doc.status or 'Draft' }}
 		</span>
 	</div>
 
-	{% if is_manager %}
 	<div class="card border-warning mb-4 shadow-sm">
-		<div class="card-header bg-warning text-dark fw-bold">Manager-Ansicht: Gast-Details</div>
+		<div class="card-header bg-warning text-dark fw-bold">Gast-Details</div>
 		<div class="card-body">
 			<div class="row">
 				<div class="col-md-6">
-					<label class="small text-muted">Adresse</label>
-					{% if customer_address %}
-					<p>{{ customer_address.address_line1 or 'Keine Adresse hinterlegt' }}<br>
-					   {{ customer_address.city or '' }}</p>
-					{% else %}
-					<p>Keine Adresse hinterlegt</p>
-					{% endif %}
+					<label class="small text-muted">Gruppe</label>
+					<p>{{ booking_group_name or '—' }}</p>
+					<label class="small text-muted">Ansprechpartner</label>
+					<p>{{ booking_user or '—' }}</p>
+					<label class="small text-muted">Rechnungs-Email</label>
+					<p>{% if '@' in booking_user_email %}{{ booking_user_email.split('@')[0][:3] }}***{{ booking_user_email.split('@')[0][-1] }}@{{ booking_user_email.split('@')[1] }}{% else %}—{% endif %}</p>
+					<label class="small text-muted">Zeitraum</label>
+					<p>{{ frappe.utils.formatdate(doc.starts_on, 'dd.MM.yyyy') }} – {{ frappe.utils.formatdate(doc.ends_on, 'dd.MM.yyyy') }}</p>
 				</div>
-				<div class="col-md-6">
-					<label class="small text-muted">Kontakt-Email</label>
-					<div class="input-group">
-						<input type="email" id="guest-email" class="form-control" value="{{ doc.contact_email or '' }}">
-						<button class="btn btn-outline-primary" onclick="updateEmail()">Speichern</button>
-					</div>
-				</div>
+
 			</div>
 		</div>
 	</div>
-	{% endif %}
 
     <div class="card mb-4 shadow-sm">
         <div class="card-header bg-info fw-bold">Informationen</div>
@@ -81,6 +75,8 @@
 <script>
 	let daily_entries = [];
 	const today = new Date().toISOString().split('T')[0];
+	const booking_end_date = '{{ doc.ends_on }}';
+	const booking_start_date = '{{ doc.starts_on }}';
 	const FIELDS = ['adults_ue', 'children_ue', 'u5_ue', 'adults_day', 'children_day'];
 	const LABELS = {
 		adults_ue:    'Übernachtung (Erw.)',
@@ -98,9 +94,9 @@
 			args: { booking: booking_name },
 			callback: function(r) {
 				daily_entries = r.message || [];
-				// Sicherstellen, dass heute immer vorhanden ist
-				if (!daily_entries.find(e => e.date === today)) {
-					daily_entries.unshift({ date: today, adults_ue: 0, children_ue: 0, u5_ue: 0, adults_day: 0, children_day: 0 });
+				// Abreisetag immer anzeigen
+				if (booking_end_date && !daily_entries.find(e => e.date === booking_end_date)) {
+					daily_entries.push({ date: booking_end_date, adults_ue: 0, children_ue: 0, u5_ue: 0, adults_day: 0, children_day: 0 });
 				}
 				renderAllEntries();
 			}
@@ -122,9 +118,27 @@
 	function renderEntryCard(entry) {
 		const d = entry.date;
 		const isToday = d === today;
+		const isCheckout = booking_end_date && d === booking_end_date;
+		const isCheckin = d === booking_start_date;
 		const dateLabel = new Date(d + 'T00:00:00').toLocaleDateString('de-DE', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' });
+		if (isCheckout) {
+			return `<div class="card mb-4 shadow-sm border-secondary" id="card-${d}">
+				<div class="card-body">
+					<div class="d-flex justify-content-end">
+						<span class="badge bg-info fs-6">Checkout</span>
+					</div>
+					<div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+						<h5 class="mb-0">Anwesenheit für ${dateLabel}</h5>
+					</div>
+					<p class="text-muted mt-2 mb-0 small">Der letzte Tag ist der Abreisetag – keine Einträge erforderlich.</p>
+				</div>
+			</div>`;
+		}
 		return `<div class="card mb-4 shadow-sm${isToday ? ' entry-card-today' : ''}" id="card-${d}">
 			<div class="card-body">
+				<div class="d-flex justify-content-end" style="display: ${isCheckin ? 'flex !important' : 'none !important'}">
+					<span class="badge bg-info fs-6">Check-in</span>
+				</div>
 				<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
 					<h5 class="mb-0">Anwesenheit für ${dateLabel}${isToday ? ' <span class="badge bg-primary ms-2 fs-6">heute</span>' : ''}</h5>
 					<button class="btn btn-outline-secondary btn-sm" type="button" onclick="copyPreviousDay('${d}')">
@@ -140,7 +154,7 @@
 	}
 
 	function renderAllEntries() {
-		const sorted = [...daily_entries].sort((a, b) => b.date.localeCompare(a.date));
+		const sorted = [...daily_entries].sort((a, b) => a.date.localeCompare(b.date));
 		document.getElementById('entries-container').innerHTML = sorted.map(renderEntryCard).join('');
 	}
 
@@ -195,15 +209,6 @@
 		});
 	}
 
-	function updateEmail() {
-		const new_email = document.getElementById('guest-email').value;
-		const booking_name = new URLSearchParams(window.location.search).get('name');
-		if (!booking_name) { frappe.msgprint('Fehler: Keine Buchungs-ID gefunden'); return; }
-		frappe.call({
-			method: 'frappe.client.set_value',
-			args: { doctype: 'Booking Checkout', name: booking_name, fieldname: 'contact_email', value: new_email },
-			callback: function() { frappe.show_alert({ message: 'Email aktualisiert', indicator: 'green' }); }
-		});
-	}
+
 </script>
 {% endblock %}

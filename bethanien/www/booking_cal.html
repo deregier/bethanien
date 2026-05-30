@@ -14,8 +14,9 @@
 
   <!-- Tab switcher -->
   <div class="bca-tabs" role="tablist">
-    <button class="bca-tab bca-tab--active" id="tab-calendar" role="tab" aria-selected="true">Kalender</button>
-    <button class="bca-tab" id="tab-list" role="tab" aria-selected="false">Liste</button>
+    <button class="bca-tab bca-tab--active" id="tab-calendar"  role="tab" aria-selected="true">Kalender</button>
+    <button class="bca-tab"                  id="tab-list"      role="tab" aria-selected="false">Liste</button>
+    <button class="bca-tab"                  id="tab-resources" role="tab" aria-selected="false">Ressourcen</button>
   </div>
 
   <!-- Shared toolbar (always visible) -->
@@ -24,22 +25,13 @@
     <button class="bca-btn bca-btn-today" id="btn-today">Heute</button>
     <button class="bca-btn" id="btn-next" title="Vor">&#8250;</button>
     <span class="bca-title" id="bca-title"></span>
-    <div class="bca-view-btns" id="bca-view-btns"></div>
   </div>
 
-  <!-- Calendar view -->
-  <div id="view-calendar">
-    <div id="bca-legend" class="bca-legend"></div>
-    <div id="ec"></div>
-  </div>
+  <!-- Legend (Ressourcen tab only) -->
+  <div id="bca-legend" class="bca-legend bca-hidden"></div>
 
-  <!-- List view -->
-  <div id="view-list" class="bca-hidden">
-    <div class="bca-list-toolbar">
-      <span class="bca-list-count" id="bca-list-count"></span>
-    </div>
-    <div id="bca-booking-list"></div>
-  </div>
+  <!-- EventCalendar (Kalender + Ressourcen tabs) -->
+  <div id="ec"></div>
 
 </div>
 

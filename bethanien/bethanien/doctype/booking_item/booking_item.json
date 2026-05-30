@@ -7,7 +7,10 @@
   "code",
   "type",
   "description",
-  "price"
+  "preise_section",
+  "price",
+  "weitere_angaben_section",
+  "booking_unit"
  ],
  "fields": [
   {
@@ -26,7 +29,7 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Typ",
-   "options": "Mehrt\u00e4gig\nTagesaufenthalt\nAllgemein",
+   "options": "Mehrt\u00e4gig\nTagesaufenthalt\nBuchungseinheit\nAllgemein",
    "reqd": 1
   },
   {
@@ -45,12 +48,29 @@
    "label": "Basiskosten (EUR)",
    "non_negative": 1,
    "reqd": 1
+  },
+  {
+   "fieldname": "preise_section",
+   "fieldtype": "Section Break",
+   "label": "Preise"
+  },
+  {
+   "fieldname": "weitere_angaben_section",
+   "fieldtype": "Section Break",
+   "label": "Weitere Angaben"
+  },
+  {
+   "depends_on": "eval:doc.type == 'Buchungseinheit'",
+   "fieldname": "booking_unit",
+   "fieldtype": "Link",
+   "label": "Buchungseinheit",
+   "options": "Booking Unit"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-04-18 13:43:54.630462",
+ "modified": "2026-05-28 21:10:13.640455",
  "modified_by": "Administrator",
  "module": "Bethanien",
  "name": "Booking Item",

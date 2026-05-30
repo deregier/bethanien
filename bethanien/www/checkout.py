@@ -7,40 +7,43 @@ no_cache = 1
 def get_context(context):
 	"""
     Kontext für die Checkout-Seite
-    URL: /checkout?name=<booking_name>
+    URL: /checkout?name=<checkout_name>
     """
     
-	booking_name = frappe.form_dict.get("name")
+	checkout_name = frappe.form_dict.get("name")
 
-    # Prüfen, ob booking_name übergeben wurde
-	if not booking_name:
+    # Prüfen, ob checkout_name übergeben wurde
+	if not checkout_name:
     	# Kein Name → 404
 		frappe.local.response["http_status_code"] = 404
 		frappe.local.response["message"] = "Keine Buchungs-ID angegeben"
 		return context
 
     # Prüfen, ob der Datensatz existiert
-	if not frappe.db.exists("Booking Checkout", booking_name):
+	if not frappe.db.exists("Booking Checkout", checkout_name):
     	# Datensatz existiert nicht → 404
 		frappe.local.response["http_status_code"] = 404
-		frappe.local.response["message"] = f"Buchung '{booking_name}' nicht gefunden"
+		frappe.local.response["message"] = f"Buchung '{checkout_name}' nicht gefunden"
 		return context
 	
-	doc = frappe.get_doc("Booking Checkout", booking_name)
+	doc = frappe.get_doc("Booking Checkout", checkout_name)
 	context.doc = doc
 
 	# Rollen-Prüfung
 	user_roles = frappe.get_roles()
 	context.is_manager = "Hotel Manager" in user_roles or "System Manager" in user_roles
 	
-	# Adressdaten nur für Manager laden
-	if context.is_manager and doc.get("customer"):
-		context.customer_address = frappe.db.get_value(
-			"Address", 
-			{"link_doctype": "Customer", "link_name": doc.customer}, 
-			["address_line1", "city"], 
-			as_dict=True
-		)
+	# Buchungsdaten laden
+	context.booking_group_name = doc.booking_groupname or ""
+	context.booking_user = ""
+	context.booking_user_email = ""
+
+	if doc.booking:
+		booking_doc = frappe.get_doc("Booking", doc.booking)
+		context.booking_user_email = booking_doc.customer_email or ""
+		if booking_doc.customer:
+			customer_doc = frappe.get_doc("Booking User", booking_doc.customer)
+			context.booking_user = f"{customer_doc.first_name or ''} {customer_doc.last_name or ''}".strip()
 
 	return context
 

@@ -94,13 +94,14 @@
    "fieldname": "guests",
    "fieldtype": "Table",
    "label": "G\u00e4ste Aufenthalt",
-   "options": "Booking Guest Log"
+   "options": "Booking Guest Log",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-04-13 19:15:30.818821",
+ "modified": "2026-05-16 20:43:20.149147",
  "modified_by": "Administrator",
  "module": "Bethanien",
  "name": "Booking Checkout",

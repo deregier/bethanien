@@ -5,6 +5,12 @@ frappe.ui.form.on("Booking Checkout", {
  	setup(frm) {
         setup_guest_log_grid(frm);
 	},
+
+	refresh(frm) {
+		frm.add_custom_button(__("Übernachtung eintragen"), () => {
+			window.open(`/checkout?name=${frm.doc.name}`, '_blank');
+		}).addClass('btn-primary');
+	},
  });
 
  function setup_guest_log_grid(frm) {

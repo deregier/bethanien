@@ -25,6 +25,37 @@ class BookingCheckout(Document):
 				))
 
 
+def build_booking_items(booking_name, withNights):
+	items = frappe.get_all(
+		"Booking Item",
+		filters={"type": ["in", ["Allgemein", "Buchungseinheit"]]},
+		fields=["name", "description", "booking_unit"]
+	) or []
+
+	booking_items = []
+	for item in items:
+		booking_items.append({
+			"booking_item": item.name,
+			"description": item.description,
+			"quantity": 0,
+			"_booking_unit": item.booking_unit
+		})
+
+	# calculate quantities for booking units only if not with nights
+	if withNights == 0:
+		unit_links = frappe.get_all("Booking Unit Link", filters={"parent": booking_name, "is_active": 1}, fields=["booking_unit"]) or []
+		for link in unit_links:
+			for item in booking_items:
+				if item["_booking_unit"] == link.booking_unit:
+					item["quantity"] += 1 
+
+	# remove internal helper key before returning
+	for item in booking_items:
+		item.pop("_booking_unit", None)
+
+	return booking_items
+
+
 @frappe.whitelist()
 def create_checkout(booking_name):
 	"""Create a Booking Checkout for the given booking"""
@@ -45,15 +76,18 @@ def create_checkout(booking_name):
 	
 	# Get booking document
 	booking = frappe.get_doc("Booking", booking_name)
-	
+
+	booking_items = build_booking_items(booking_name, booking.with_nights)
+
 	# Create new checkout
 	checkout = frappe.get_doc({
 		"doctype": "Booking Checkout",
 		"booking": booking_name,
 		#"checkout_date": frappe.utils.now(),
 		# Pre-populate fields from booking if needed
+		"booking_items": booking_items
 	})
-	
+
 	checkout.insert()
 	frappe.db.commit()
 	

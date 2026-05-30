@@ -14,12 +14,11 @@ PALETTE = [
 ]
 
 STATUS_COLORS = {
-	"Entwurf":     "#aaaaaa",
 	"Offen":       "#aaaaaa",
-	"Eingereicht": "#3c78d8",
-	"Bestätigt":   "#6aa84f",
+	"Ausgecheckt": "#6aa84f",
 	"Abgelehnt":   "#cc0000",
 	"Storniert":   "#e69138",
+	"Berechnet":   "#3c78d8",
 }
 
 
@@ -89,53 +88,55 @@ def get_booking_cal_resources():
 @frappe.whitelist()
 def get_booking_cal_events(start, end):
 	"""
-	Return bookings overlapping [start, end) as EventCalendar event objects.
+	Return one EventCalendar event per active Booking Unit Link row.
+	Each row carries its own starts_on_dt / ends_on_dt so individual
+	units of the same booking can span different date ranges.
 	Events use all-day spans (end is exclusive +1 day).
 	"""
 	frappe.has_permission("Booking", "read", throw=True)
 
-	bookings = frappe.db.sql(
+	rows = frappe.db.sql(
 		"""
-		SELECT b.name, b.group_name, b.workflow_state,
-		       b.starts_on_dt, b.ends_on_dt
-		FROM `tabBooking` b
-		WHERE b.starts_on_dt IS NOT NULL
-		  AND b.starts_on_dt < %(end)s
-		  AND (b.ends_on_dt IS NULL OR b.ends_on_dt >= %(start)s)
-		ORDER BY b.starts_on_dt ASC
+		SELECT bul.name        AS bul_name,
+		       bul.parent      AS booking,
+		       bul.booking_unit,
+		       bul.starts_on_dt,
+		       bul.ends_on_dt,
+		       b.group_name,
+		       b.workflow_state,
+		       b.starts_on_dt  AS b_starts_on_dt,
+		       b.ends_on_dt    AS b_ends_on_dt
+		FROM `tabBooking Unit Link` bul
+		JOIN `tabBooking` b ON b.name = bul.parent
+		WHERE bul.is_active = 1
+		  AND COALESCE(bul.starts_on_dt, b.starts_on_dt) IS NOT NULL
+		  AND COALESCE(bul.starts_on_dt, b.starts_on_dt) < %(end)s
+		  AND (
+		        COALESCE(bul.ends_on_dt, b.ends_on_dt) IS NULL
+		        OR COALESCE(bul.ends_on_dt, b.ends_on_dt) >= %(start)s
+		  )
+		ORDER BY COALESCE(bul.starts_on_dt, b.starts_on_dt) ASC
 		""",
 		{"start": start, "end": end},
 		as_dict=True,
 	)
 
-	if not bookings:
+	if not rows:
 		return []
 
-	booking_names = [str(b.name) for b in bookings]
-
-	links = frappe.db.sql(
-		"""
-		SELECT parent, booking_unit
-		FROM `tabBooking Unit Link`
-		WHERE parent IN %(names)s AND is_active = 1
-		""",
-		{"names": booking_names},
-		as_dict=True,
-	)
-
-	units_by_booking: dict = {}
-	for lnk in links:
-		units_by_booking.setdefault(str(lnk.parent), []).append(str(lnk.booking_unit))
-
 	events = []
-	for b in bookings:
-		key    = str(b.name)
-		status = b.workflow_state or "Entwurf"
-		bg     = STATUS_COLORS.get(status, "#aaaaaa")
-		fg     = _contrast(bg)
+	for r in rows:
+		booking_key = str(r.booking)
+		status      = r.workflow_state or "Entwurf"
+		bg          = STATUS_COLORS.get(status, "#aaaaaa")
+		fg          = _contrast(bg)
 
-		start_d = _to_date_str(b.starts_on_dt)
-		end_d   = _to_date_str(b.ends_on_dt) if b.ends_on_dt else start_d
+		# Use the unit's own times; fall back to the booking's times
+		eff_start = r.starts_on_dt or r.b_starts_on_dt
+		eff_end   = r.ends_on_dt   or r.b_ends_on_dt
+
+		start_d = _to_date_str(eff_start)
+		end_d   = _to_date_str(eff_end) if eff_end else start_d
 
 		# all-day end is exclusive → add 1 day so the last day is fully covered
 		try:
@@ -146,20 +147,20 @@ def get_booking_cal_events(start, end):
 			end_excl = end_d
 
 		events.append({
-			"id":              key,
-			"title":           b.group_name or key,
+			"id":              f"{booking_key}_{r.booking_unit}",
+			"title":           r.group_name or booking_key,
 			"start":           start_d,
 			"end":             end_excl,
 			"allDay":          True,
-			"resourceIds":     units_by_booking.get(key, []),
+			"resourceId":      str(r.booking_unit),
 			"backgroundColor": bg,
 			"textColor":       fg,
 			"extendedProps": {
-				"booking":     key,
+				"booking":     booking_key,
 				"status":      status,
-				"group_name":  b.group_name or key,
-				"start_label": _fmt_label(b.starts_on_dt),
-				"end_label":   _fmt_label(b.ends_on_dt),
+				"group_name":  r.group_name or booking_key,
+				"start_label": _fmt_label(eff_start),
+				"end_label":   _fmt_label(eff_end),
 			},
 		})
 
